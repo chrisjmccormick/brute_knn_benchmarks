@@ -24,3 +24,9 @@ faiss_v,gpu_RAM,gpu_name,n_gpu,success,vec_count,vec_len
 1.4.0,24,Tesla K80,2,False,53690000,96
 1.4.0,24,Tesla K80,2,False,50330000,96
 1.4.0,24,Tesla K80,2,True,48650000,96
+1.4.0,24,Tesla K80,2,True,50000000,96
+1.4.0,24,Tesla K80,2,False,50160000,96
+1.4.0,24,Tesla K80,2,True,50080000,96
+1.4.0,24,Tesla K80,2,True,50120000,96
+1.4.0,24,Tesla K80,2,True,50140000,96
+1.4.0,24,Tesla K80,2,True,50150000,96

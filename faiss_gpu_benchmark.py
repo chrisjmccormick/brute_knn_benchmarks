@@ -48,12 +48,12 @@ test = {
         'metric': 'L2'
     }
 
-dataset_sizes = [(int(1e6), 96),
-                 (int(10e6), 96),
-                 (int(25.07e6), 96), # Max for 1x K80
+dataset_sizes = [#(int(1e6), 96),
+                 #(int(10e6), 96),
+                 #(int(25.07e6), 96), # Max for 1x K80
                  
-                 (int(50e6), 96),
-                 (int(50.14e6), 96), # Max for 2x K80
+                 #(int(50e6), 96),
+                 #(int(50.15e6), 96), # Max for 2x K80
                  
                  #(int(100e6), 96),
                  #(int(200e6), 96) # Max for 8x K80
