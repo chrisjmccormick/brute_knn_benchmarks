@@ -39,8 +39,8 @@ vec_lengths = [96, 300, 4096]
 test = {
         # Specify properties of the GPU
         'gpu_name': "Tesla K80",
-        'n_gpu': 2,
-        'gpu_RAM': 2 * 12,
+        'n_gpu': 8,
+        'gpu_RAM': 8 * 12,
         'faiss_v': '1.4.0', 
         'instance': 'p2.8xlarge',
         
@@ -48,24 +48,70 @@ test = {
         'metric': 'L2'
     }
 
-dataset_sizes = [#(int(1e6), 96),
-                 #(int(10e6), 96),
-                 #(int(25.07e6), 96), # Max for 1x K80
+# TODO 
+#  DONE - 1x VSX Max
+#  DONE - 1x V100_f32 Max
+#  DONE - 1x V100_f16 Max
+#  DONE - 4x VSX Max
+#  DONE - 4x V100 Max f32 and f16
+#  DONE - 10x VSX Max
+#  DONE - 8x V100 f32 and f16 Max
+#  DONE - 16x K80 Max                 
+
+dataset_sizes = [                 
+                 (     int(1e6), 96, ' 1M x 96'),
+                 (    int(10e6), 96, '10M x 96'),
+                 ( int(25.07e6), 96, '1x K80 Max Capacity'),
+                 ( int(33.43e6), 96, '1x V100 f32 Max Capacity'), # Max TBD
+                 (    int(50e6), 96, '50M x 96'),
+                 ( int(50.15e6), 96, '2x K80 Max Capacity'), 
+                 ( int(66.86e6), 96, '1x V100 f16 Max Capacity'), # Max TBD
+                 (   int(100e6), 96, '100M x 96'),
+                 (  int(133.69), 96, '4x V100 f32 Max Capacity'), # Max TBD
+                 (   int(200e6), 96, '200M x 96'),
+                 (int(200.54e6), 96, '8x K80 Max Capacity'), 
+                 (int(267.38e6), 96, '8x V100 f32 Max Capacity'), # Max TBD
+                 (int(267.38e6), 96, '4x V100 f16 Max Capacity'), # Max TBD
+                 (   int(400e6), 96, '400M x 96'), 
+                 (int(401.08e6), 96, '16x K80 Max Capacity'), 
+                 (int(469.76e6), 96, '1x VSX Max Capacity'), # 469.762048e6
+                 (int(534.76e6), 96, '8x V100 f16 Max Capacity'), # Max TBD
+                 ( int(1.879e9), 96, '4x VSX Max Capacity'), # 1.879048192e9
+                 ( int(4.697e9), 96, '10x VSX Max Capacity'), # 4.69762048e9
+                  
+                 (     int(1e6), 300, '1M x 300'),
+                 (     int(5e6), 300, '5M x 300'),
+                 (  int(8.08e6), 300, '1x K80 Max Capacity'),
+                 (    int(10e6), 300, '10M x 300'),
+                 ( int(10.77e6), 300, '1x V100 f32 Max Capacity'), # Max TBD
+                 ( int(21.54e6), 300, '1x V100 f16 Max Capacity'), # Max TBD
+                 ( int(43.08e6), 300, '4x V100 f32 Max Capacity'), # Max TBD
+                 (    int(50e6), 300, '50M x 300'),
+                 ( int(64.56e6), 300, '8x K80 Max Capacity'),
+                 ( int(86.16e6), 300, '4x V100 f16 Max Capacity'), # Max TBD
+                 ( int(86.16e6), 300, '8x V100 f32 Max Capacity'), # Max TBD
+                 (int(129.12e6), 300, '16x K80 Max Capacity'),
+                 (int(150.32e6), 300, '1x VSX Max Capacity'), # 150.323855e6
+                 (int(172.32e6), 300, '8x V100 f16 Max Capacity'), # Max TBD
+                 (int(601.28e6), 300, '4x VSX Max Capacity'), # ...                 
+                 ( int(1.503e9), 300, '10x VSX Max Capacity'), # 1.5032385536e9
                  
-                 #(int(50e6), 96),
-                 #(int(50.15e6), 96), # Max for 2x K80
+                 (   int(100e3), 4096, '100K x 4096'),
+                 (   int(590e3), 4096, '1x K80 Max Capacity'),
+                 (   int(780e3), 4096, '1x V100 f32 Max Capacity'),
+                 (     int(1e6), 4096, '1M x 4096'),
+                 (  int(1.56e6), 4096, '1x V100 f16 Max Capacity'),
+                 (     int(2e6), 4096, '2M x 4096'),
+                 (  int(3.12e6), 4096, '4x V100 f32 Max Capacity'), # Max TBD
+                 (  int(6.24e6), 4096, '4x V100 f16 Max Capacity'), # Max TBD
+                 (  int(6.24e6), 4096, '8x V100 f32 Max Capacity'), # Max TBD
+                 (  int(4.74e6), 4096, '8x K80 Max Capacity'), 
+                 (  int(9.48e6), 4096, '16x K80 Max Capacity'), 
+                 ( int(11.01e6), 4096, '1x VSX Max Capacity'), # 11.010048e6
+                 ( int(12.28e6), 4096, '8x V100 f16 Max Capacity'), # Max TBD
+                 ( int(44.04e6), 4096, '4x VSX Max Capacity')
+                 ( int(110.1e6), 4096, '10x VSX Max Capacity'), # 110.10048e6
                  
-                 #(int(100e6), 96),
-                 #(int(200e6), 96) # Max for 8x K80
-                 
-                 (int(1e6), 300),
-                 (int(5e6), 300),
-                 (int(8.08e6), 300), # Max for 1x K80
-                 (int(10e6), 300),
-                 
-                 (int(100e5), 4096),
-                 (int(590e5), 4096), # Max for 1x K80
-                 (int(1e6), 4096)
                 ]
            
 batch_sizes = [1, 16, 64, 256, 1024]
