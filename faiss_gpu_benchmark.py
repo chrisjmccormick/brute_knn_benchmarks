@@ -48,7 +48,7 @@ test = {
         'metric': 'L2'
     }
 
-
+# These are all of the columns in our output. This array holds column order.
 column_names = ['timestamp','gpu_name','n_gpu','metric',
                  'dataset_name','dataset_count', 'vec_len', 'dtype', 
                  'batch_size','k',
@@ -120,10 +120,48 @@ dataset_sizes = [
                  ( int(110.1e6), 4096, '10x VSX Max Capacity'), # 110.10048e6
                  
                 ]
-           
+
+
+def get_max_capacity(test):
+    '''
+    This function looks up the maximum number of vectors that the current GPU
+    configuration can support at this vector length.
+    '''
+    
+    # Select the trials matching this test's parameters.
+    df = pd.read_csv('max_dataset_size.csv')
+    df = df.loc[(df.gpu_name == test['gpu_name']) &
+                (df.n_gpu == test['n_gpu']) &
+                (df.gpu_RAM == test['gpu_RAM']) &
+                (df.faiss_v == test['faiss_v']) &
+                (df.vec_len == test['vec_len'])]
+    
+    # Error if there's no matching dataset size experiments.
+    if df.empty or df.loc[df.success == True].empty:
+        print('ERROR - No capacity data for this configuration')
+        return -1
+    
+    # Find the maximum successful size and the minimum fail size.    
+    max_success = int(df.loc[df.success == True].vec_count.max())
+    min_fail = int(df.loc[df.success == False].vec_count.min())
+    
+    # Warn if the capacity experiments haven't converged yet.
+    if (min_fail - max_success) > 10000:
+        print('WARNING: Capacity experiments not complete for %dx %s with length %d' % (test['n_gpu'], test['gpu_name'], test['vec_len']))
+    
+    return max_success
+   
+    
+
 batch_sizes = [1, 16, 64, 256, 1024]
 ks = [1, 10, 100]
 repetitions = 10
+
+# Memory map the dataset files. We'll only load the portions that we need 
+# for each experiment into memory
+vecs_mmap = {96: np.load('210000000_x_96.npy', mmap_mode='r'),
+             300: np.load('100000000_x_300.npy', mmap_mode='r'),
+             4096: np.load('5000000_x_4096.npy', mmap_mode='r')}
 
 # For each dataset size...
 for ds_shape in dataset_sizes:
@@ -136,6 +174,14 @@ for ds_shape in dataset_sizes:
     test['dataset_count'] = ds_shape[0]
     test['vec_len'] = ds_shape[1]
     
+    # Lookup the maximum supported capacity for the current GPU configuration.
+    max_count = get_max_capacity(test)
+    
+    # Check if we can support this size.
+    if test['dataset_count'] > max_count:
+        print('Dataset size not supported, skipping.')
+        continue
+    
     # =====================================
     #          Generate Dataset
     # =====================================
@@ -144,12 +190,22 @@ for ds_shape in dataset_sizes:
     test['dataset_name'] = 'random'
     test['notes'] = ds_shape[2]
     
-    print('Generating dataset...')
-    sys.stdout.flush()
-    
+    generate = False
+
     t0 = time.time()
+    
+    if generate:
+        print('Generating dataset...')
+        sys.stdout.flush()
                 
-    vecs = np.random.rand(ds_shape[0], ds_shape[1]).astype('float32')
+        vecs = np.random.rand(ds_shape[0], ds_shape[1]).astype('float32')
+    
+    else:
+        print('Loading dataset...')
+        sys.stdout.flush()
+        
+        # Read the portion of the dataset that we need.
+        vecs = vecs_mmap[ds_shape[1]][0:ds_shape[0],:]
         
     print('   Done. Took %.2f seconds.' % (time.time() - t0))
         
