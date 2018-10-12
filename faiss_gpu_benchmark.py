@@ -53,7 +53,7 @@ column_names = ['timestamp','gpu_name','n_gpu','metric',
                  'dataset_name','dataset_count', 'vec_len', 'dtype', 
                  'batch_size','k',
                  'latency','load_time','max_latency','min_latency',
-                 'repetitions','gpu_RAM','faiss_v','instance']
+                 'repetitions','gpu_RAM','faiss_v','instance','notes']
 
 # TODO 
 #  DONE - 1x VSX Max
@@ -66,7 +66,7 @@ column_names = ['timestamp','gpu_name','n_gpu','metric',
 #  DONE - 16x K80 Max                 
 
 dataset_sizes = [                 
-                 (     int(1e6), 96, ' 1M x 96'),
+                 (     int(1e6), 96, '1M x 96'),
                  (    int(10e6), 96, '10M x 96'),
                  ( int(25.07e6), 96, '1x K80 Max Capacity'),
                  ( int(33.43e6), 96, '1x V100 f32 Max Capacity'), # Max TBD
@@ -116,7 +116,7 @@ dataset_sizes = [
                  (  int(9.48e6), 4096, '16x K80 Max Capacity'), 
                  ( int(11.01e6), 4096, '1x VSX Max Capacity'), # 11.010048e6
                  ( int(12.28e6), 4096, '8x V100 f16 Max Capacity'), # Max TBD
-                 ( int(44.04e6), 4096, '4x VSX Max Capacity')
+                 ( int(44.04e6), 4096, '4x VSX Max Capacity'),
                  ( int(110.1e6), 4096, '10x VSX Max Capacity'), # 110.10048e6
                  
                 ]
