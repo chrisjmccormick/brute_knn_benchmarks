@@ -48,6 +48,13 @@ test = {
         'metric': 'L2'
     }
 
+
+column_names = ['timestamp','gpu_name','n_gpu','metric',
+                 'dataset_name','dataset_count', 'vec_len','batch_size','k',
+                 'latency','load_time','max_latency',
+                 'min_latency','repetitions','gpu_RAM','faiss_v',
+                 'instance']
+
 # TODO 
 #  DONE - 1x VSX Max
 #  DONE - 1x V100_f32 Max
@@ -231,8 +238,5 @@ for ds_shape in dataset_sizes:
     # Write out the .csv file. 
     # I've specified a specific column order that I feel makes the data easier 
     # to read in a spreadsheet.
-    df[['timestamp','gpu_name','n_gpu','metric','dataset_name','dataset_count',
-        'vec_len','batch_size','k','latency','load_time','max_latency',
-        'min_latency','repetitions','gpu_RAM','faiss_v',
-        'instance']].to_csv('benchmark_tests.csv', index = False)
+    df[column_names].to_csv('benchmark_tests.csv', index = False, float_format='%.6f')
             
