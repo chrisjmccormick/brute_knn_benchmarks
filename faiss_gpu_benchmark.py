@@ -50,10 +50,10 @@ test = {
 
 
 column_names = ['timestamp','gpu_name','n_gpu','metric',
-                 'dataset_name','dataset_count', 'vec_len','batch_size','k',
-                 'latency','load_time','max_latency',
-                 'min_latency','repetitions','gpu_RAM','faiss_v',
-                 'instance']
+                 'dataset_name','dataset_count', 'vec_len', 'dtype', 
+                 'batch_size','k',
+                 'latency','load_time','max_latency','min_latency',
+                 'repetitions','gpu_RAM','faiss_v','instance']
 
 # TODO 
 #  DONE - 1x VSX Max
@@ -142,6 +142,7 @@ for ds_shape in dataset_sizes:
 
     # Record the name of the dataset.
     test['dataset_name'] = 'random'
+    test['notes'] = ds_shape[2]
     
     print('Generating dataset...')
     sys.stdout.flush()
@@ -168,6 +169,9 @@ for ds_shape in dataset_sizes:
     # replicated.
     co = faiss.GpuMultipleClonerOptions()
     co.shard = True
+    
+    # FAISS uses 32-bit floats.
+    test['dtype'] = 'float32'
     
     # Make it into a gpu index
     gpu_index = faiss.index_cpu_to_all_gpus(cpu_index, co=co, ngpu=test['n_gpu'])
