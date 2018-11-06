@@ -34,12 +34,12 @@ import pandas as pd
 
 test = {# Specify properties of the GPU
         'gpu_name': "Tesla K80",
-        'n_gpu': 2,
-        'gpu_RAM': 2 * 12,
+        'n_gpu': 16,
+        'gpu_RAM': 16 * 12,
         'faiss_v': '1.4.0', 
          
         # Specify properties of the dataset
-        'vec_len': 96,
+        'vec_len': 300,
         'success': False
     }
 
@@ -100,19 +100,33 @@ df = df.append(pd.DataFrame([test]), ignore_index=True)
 df.to_csv('max_dataset_size.csv', index = False)
 
 # =====================================
-#          Generate Dataset
+#       Load or Generate Dataset
 # =====================================
-    
-print('\nGenerating dataset...')
-sys.stdout.flush()
+
+# Record the name of the dataset.
+generate = False
 
 t0 = time.time()
+
+if generate:
+    print('Generating dataset...')
+    sys.stdout.flush()
             
-vecs = np.random.rand(test['vec_count'], test['vec_len']).astype('float32')
+    vecs = np.random.rand(test['vec_count'], test['vec_len']).astype('float32')
+
+else:
+    print('Loading dataset...')
+    sys.stdout.flush()
+    
+    # Open a memory mapped version of the matrix.
+    vecs_mmap = np.load('./%d_x_%d.npy' % (int(130E6), int(300)), mmap_mode='r')
+    
+    # Read the portion of the dataset that we need.
+    vecs = vecs_mmap[test['vec_len']][0:test['vec_count'],:]
     
 print('   Done. Took %.2f seconds.' % (time.time() - t0))
     
-print('\nDataset is [%d x %d]\n' % vecs.shape)
+print('Dataset is [%d x %d]' % vecs.shape)
 
 # =====================================
 #            FAISS Setup
