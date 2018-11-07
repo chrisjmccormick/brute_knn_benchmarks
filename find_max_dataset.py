@@ -34,8 +34,8 @@ import pandas as pd
 
 test = {# Specify properties of the GPU
         'gpu_name': "Tesla K80",
-        'n_gpu': 16,
-        'gpu_RAM': 16 * 12,
+        'n_gpu': 8,
+        'gpu_RAM': 8 * 12,
         'faiss_v': '1.4.0', 
          
         # Specify properties of the dataset
@@ -92,13 +92,6 @@ if (try_size == min_fail) or (try_size == max_success):
 
 test['vec_count'] = try_size   
 
-# Record the test in the table. 
-# If the test crashes during the malloc, then the failure will stand.
-# If the test succeeds, we'll go back and fix the result.
-df = pd.read_csv('max_dataset_size.csv')
-df = df.append(pd.DataFrame([test]), ignore_index=True)
-df.to_csv('max_dataset_size.csv', index = False)
-
 # =====================================
 #       Load or Generate Dataset
 # =====================================
@@ -122,7 +115,7 @@ else:
     vecs_mmap = np.load('./%d_x_%d.npy' % (int(130E6), int(300)), mmap_mode='r')
     
     # Read the portion of the dataset that we need.
-    vecs = vecs_mmap[test['vec_len']][0:test['vec_count'],:]
+    vecs = vecs_mmap[0:test['vec_count'],:]
     
 print('   Done. Took %.2f seconds.' % (time.time() - t0))
     
@@ -146,6 +139,13 @@ co.shard = True
 # Make it into a gpu index
 gpu_index = faiss.index_cpu_to_all_gpus(cpu_index, co=co, ngpu=test['n_gpu'])
 
+# Record the test in the table. 
+# If the test crashes during the malloc below, then the failure will stand.
+# If the test succeeds, then at the end of this script we go back and fix the
+# result.
+df = pd.read_csv('max_dataset_size.csv')
+df = df.append(pd.DataFrame([test]), ignore_index=True)
+df.to_csv('max_dataset_size.csv', index = False)
 
 # Add vecs to our GPU index
 try:
@@ -162,9 +162,13 @@ try:
     #          Attempt to Query
     # ======================================
     
+    print('Attempting batch query of 1,024 vectors with k=100...')
+    t0 = time.time()    
+    
     # Attempt a big batch query to ensure it doesn't crash on this.
     D, I = gpu_index.search(vecs[:1024], k=100) 
-         
+    print('    Done. Batch query took %.2f seconds' % (time.time() - t0))
+    
 # The cudaMalloc error can't be caught, unfortunately...    
 except:
     print("Error:", sys.exc_info()[0])
