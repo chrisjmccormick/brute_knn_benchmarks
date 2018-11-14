@@ -11,9 +11,12 @@ import sys
 
 # (Vector count, vector length, filename)
 datasets = [
-            ( int(210e6), 96) # 8x K80 max is ~200M
-            ( int(100e6), 300) # 8x K80 max is ~64M     
-            ( int(5e6), 4096) # 8x K80 max is ~4.7M
+            #( int(130e6), 300) # 16x GK210 max is ~128M
+            ( int(128e6), 32) # Predicted max for 1x V100
+            #( int(10e6), 4096) # 16x GK210 max should be ~9M                 
+            #( int(210e6), 96) # 8x K80 max is ~200M
+            #( int(100e6), 300) # 8x K80 max is ~64M     
+            #( int(5e6), 4096) # 8x K80 max is ~4.7M
         ]
 
 for ds in datasets:
@@ -47,7 +50,7 @@ for ds in datasets:
     
     t0 = time.time()
     
-    vecs.save('./%d_x_%d.npy' % (vec_count, vec_len))
+    np.save('./%d_x_%d.npy' % (vec_count, vec_len), vecs)
     
     print('   Done. Took %.2f seconds.' % (time.time() - t0))
 
