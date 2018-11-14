@@ -1,12 +1,31 @@
 # brute_knn_benchmarks
 Performance measurements on brute-force k-NN implementations on GPU and CPU
 
-# faiss_gpu_benchmark.py
+# Observations
+
+The following plot shows a comparison of the time taken to perform a single k-NN search on various GPU configurations. All measurements in this plot are with a vector length of 300 and k=10 neighbors.
+
+![Latency plot #1](figures/single_query_latency_k10_len300.png)
+
+* "Single Query" - Perform a search using a single query vector.
+* "Batch Query" - Perform a search using multiple query vectors supplied all at once.
+
+CPUs and GPUs tend to be more efficient at matrix-matrix operations than vector-matrix.
+
+Example: Generate the full knn-graph (with k=10) for a word model, containing 1,000,000 words with 300 features.
+| GPU  | Time Required | Total Cost |
+| ------------- | ------------- | ------------- |
+| 1x K80  | 0.095 hrs  | $0.09  |
+| 1x V100  | 0.014 hrs  | $0.04  |
+
+## Scripts
+
+### faiss_gpu_benchmark.py
 This script measures brute force k-NN performance on GPUs using the FAISS 
 library. All experimental results are appended to the `benchmark_tests.csv` 
 file.
 
-# find_max_dataset.py
+### find_max_dataset.py
 This script is used to determine, through experimentation, the maximum dataset
 size supported by FAISS on a particular GPU configuration.
 
