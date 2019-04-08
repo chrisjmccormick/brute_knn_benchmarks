@@ -13,10 +13,11 @@ The following plot shows a comparison of the time taken to perform a single k-NN
 CPUs and GPUs tend to be more efficient at matrix-matrix operations than vector-matrix.
 
 Example: Generate the full knn-graph (with k=10) for a word model, containing 1,000,000 words with 300 features.
+
 | GPU  | Time Required | Total Cost |
 | ------------- | ------------- | ------------- |
-| 1x K80  | 0.095 hrs  | $0.09  |
-| 1x V100  | 0.014 hrs  | $0.04  |
+| 1x K80  | `0.095 hrs`  | `$0.09`  |
+| 1x V100  | `0.014 hrs`  | `$0.04`  |
 
 ## Scripts
 
